@@ -59,6 +59,8 @@ class Varnish(object):
         self.options.setdefault("first-byte-timeout", "300s")
         self.options.setdefault("between-bytes-timeout", "60s")
         self.options.setdefault("cache-size", "80M")
+        self.options.setdefault("user", "nobody")
+        self.options.setdefault("group", "nobody")
 
     def install(self):
         location=self.options["location"]

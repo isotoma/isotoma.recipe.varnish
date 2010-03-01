@@ -1,0 +1,5 @@
+build
+dist
+isotoma.recipe.varnish.egg-info
+*.pyc
+

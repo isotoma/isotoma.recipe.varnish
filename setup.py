@@ -6,7 +6,7 @@ setup(
     name = 'isotoma.recipe.varnish',
     version = version,
     description = "Set up varnish and varnish logging",
-    long_description = open("README.txt").read() + "\n" + \
+    long_description = open("README.rst").read() + "\n" + \
                        open("CHANGES.txt").read(),
     classifiers = [
         "Framework :: Buildout",
