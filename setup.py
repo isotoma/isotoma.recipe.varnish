@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-version = '0.0.0'
+version = '0.0.1'
 
 setup(
     name = 'isotoma.recipe.varnish',
@@ -15,6 +15,10 @@ setup(
         "License :: OSI Approved :: Apache Software License",
 
     ],
+    package_data = {
+        '': ['README.rst', 'CHANGES.txt'],
+        'isotoma.recipe.varnish': ['template.vcl']
+    },
     keywords = "varnish proxy cache buildout",
     author = "Doug Winter",
     author_email = "doug.winter@isotoma.com",
