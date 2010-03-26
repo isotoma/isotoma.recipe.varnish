@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-version = '0.0.3'
+version = '0.0.4'
 
 setup(
     name = 'isotoma.recipe.varnish',
@@ -31,7 +31,7 @@ setup(
         'setuptools',
         'zc.buildout',
         'Cheetah',
-        'recipe.isotoma.gocaptain',
+        'isotoma.recipe.gocaptain',
     ],
     entry_points = {
         "zc.buildout": [
