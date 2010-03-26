@@ -86,7 +86,7 @@ class Varnish(object):
             -p user=%(user)s
             -p group=%(group)s
             -f "%(config)s"
-            -P "%(pidfile)s
+            -P "%(pidfile)s"
             -a %(bind)s
             -s file,"%(storage)s",%(cache-size)s
         """ % { 'user': self.options['user'],
