@@ -30,6 +30,13 @@ import shutil
 import sys
 import sets
 
+try:
+    from hashlib import sha1
+except ImportError:
+    import sha
+    def sha1(str):
+        return sha.new(str)
+
 from Cheetah.Template import Template
 
 import zc.buildout
@@ -61,6 +68,9 @@ class Varnish(object):
         self.options.setdefault("cache-size", "80M")
         self.options.setdefault("user", "nobody")
         self.options.setdefault("group", "nobody")
+
+        # Record a SHA1 of the template we use, so we can detect changes in subsequent runs
+        self.options["__hashes_template"] = sha1(open(self.options["template"]).read()).hexdigest()
 
     def install(self):
         location=self.options["location"]
