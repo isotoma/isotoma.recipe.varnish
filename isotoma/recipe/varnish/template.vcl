@@ -95,6 +95,11 @@ sub vcl_miss {
 
 sub vcl_fetch {
     set obj.grace = 120s;
+    if (obj.status = "302") {
+        set obj.http.X-Cacheable = "NO:302";
+        pass;
+    }
+
     if (!obj.cacheable) {
         #if $verbose_headers
         set obj.http.X-Cacheable = "NO";
