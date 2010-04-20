@@ -66,8 +66,8 @@ between-bytes-timeout
     The .between_bytes_timeout in the output VCL
 daemon
     The path to the varnishd daemon (default /usr/sbin/varnishd)
-runtime-parameters
-    Any other parameters to pass at runtime
+parameters
+    Any other parameters to pass at runtime (without the -p)
 user
     The user to run the daemon as (default nobody)
 group
