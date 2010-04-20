@@ -115,6 +115,7 @@ sub vcl_fetch {
     #if $verbose_headers
     set obj.http.X-Cacheable = "YES";
     #end if
+    unset obj.http.set-cookie;
     deliver;
 }
 
