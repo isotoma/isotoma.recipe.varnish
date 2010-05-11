@@ -112,6 +112,14 @@ sub vcl_fetch {
         #end if
         pass;
     }
+    # default rule for cases where CacheFu is not running - never cache
+    # HTML
+    if (obj.http.Content-Type ~ "^text/html") {
+        #if $verbose_headers
+        set obj.http.X-Cacheable = "NO:html";
+        #end if
+        pass;
+    }
     #if $verbose_headers
     set obj.http.X-Cacheable = "YES";
     #end if
