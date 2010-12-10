@@ -65,6 +65,11 @@ sub vcl_recv {
         pass;
     }
 
+    # Pipe large files to avoid a back-end shutdown (#7274)
+    if (req.url ~ "/getFile" || req.url ~ "/zip/") {
+        pipe;
+    }
+
     remove req.http.Accept-Encoding;
 
     lookup;
