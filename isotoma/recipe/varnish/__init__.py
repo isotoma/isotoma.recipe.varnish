@@ -83,7 +83,7 @@ class Varnish(object):
         self.options["__hashes_template"] = sha1(open(self.options["template"]).read()).hexdigest()
 
     def determine_varnish_version(self):
-        p = subprocess.Popen(["varnishd", "-V"], stdout=subprocess.PIPE, stderr=subporcess.PIPE)
+        p = subprocess.Popen(["varnishd", "-V"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         stdout, stderr = p.communicate()
         match = re.search("varnish-(?P<major>\d+)\.(?P<minor>\d+)", stderr)
         return match.group('major'), match.group('minor')
