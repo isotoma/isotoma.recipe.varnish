@@ -38,7 +38,7 @@ sub vcl_recv {
         if (!client.ip ~ purge) {
             error 405 "Not allowed.";
         }
-        lookup;
+        return(lookup);
     }
 
     if (req.request != "GET" &&
@@ -49,30 +49,30 @@ sub vcl_recv {
         req.request != "OPTIONS" &&
         req.request != "DELETE") {
         /* Non-RFC2616 or CONNECT which is weird. */
-        pipe;
+        return(pipe);
     }
 
     if (req.request != "GET" && req.request != "HEAD") {
         /* We only deal with GET and HEAD by default */
-        pass;
+        return(pass);
     }
 
     if (req.http.If-None-Match) {
-        pass;
+        return(pass);
     }
 
     if (req.url ~ "createObject") {
-        pass;
+        return(pass);
     }
 
     # Pipe large files to avoid a back-end shutdown (#7274)
     if (req.url ~ "/getFile" || req.url ~ "/zip/") {
-        pipe;
+        return(pipe);
     }
 
     remove req.http.Accept-Encoding;
 
-    lookup;
+    return(lookup);
 }
 
 sub vcl_pipe {
@@ -87,7 +87,7 @@ sub vcl_hit {
     }
 
     if (!obj.cacheable) {
-        pass;
+        return(pass);
     }
 }
 
@@ -99,37 +99,37 @@ sub vcl_miss {
 }
 
 sub vcl_fetch {
-    set obj.grace = 120s;
-    if (obj.status == 302) {
-        set obj.http.X-Cacheable = "NO:302";
-        pass;
+    set beresp.grace = 120s;
+    if (beresp.status == 302) {
+        set besresp.http.X-Cacheable = "NO:302";
+        return(pass);
     }
 
-    if (!obj.cacheable) {
+    if (!beresp.cacheable) {
         #if $verbose_headers
-        set obj.http.X-Cacheable = "NO";
+        set besresp.http.X-Cacheable = "NO";
         #end if
-        pass;
+        return(pass);
     }
-    if (obj.http.Cache-Control ~ "(private|no-cache|no-store)") {
+    if (besresp.http.Cache-Control ~ "(private|no-cache|no-store)") {
         #if $verbose_headers
-        set obj.http.X-Cacheable = "NO:private";
+        set besresp.http.X-Cacheable = "NO:private";
         #end if
-        pass;
+        return(pass);
     }
     # default rule for cases where CacheFu is not running - never cache
     # HTML
-    if (obj.http.Content-Type ~ "^text/html") {
+    if (besresp.http.Content-Type ~ "^text/html") {
         #if $verbose_headers
-        set obj.http.X-Cacheable = "NO:html";
+        set besresp.http.X-Cacheable = "NO:html";
         #end if
-        pass;
+        return(pass);
     }
     #if $verbose_headers
-    set obj.http.X-Cacheable = "YES";
+    set besresp.http.X-Cacheable = "YES";
     #end if
-    unset obj.http.set-cookie;
-    deliver;
+    unset besresp.http.set-cookie;
+    return(deliver);
 }
 
 #if $verbose_headers
