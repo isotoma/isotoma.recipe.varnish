@@ -57,7 +57,7 @@ class Varnish(object):
         self.options["location"] = os.path.join(
                 buildout["buildout"]["parts-directory"], self.name)
 
-        major, minor, micro = self.determine_varnish_version()
+        major, minor = self.determine_varnish_version()
         if major != 2:
             raise zc.buildout.UserError("Only version 2 of Varnish is supported")
 
@@ -81,8 +81,8 @@ class Varnish(object):
     def determine_varnish_version(self):
         p = subprocess.Popen(["varnishd", "-V"], stdout=subprocess.PIPE)
         stdout, stderr = p.communicate()
-        match = re.search("varnish-(?P<major>\d+)\.(?P<minor>\d+)\.(?P<micro>\d+)", stdout)
-        return match.group('major'), match.group('minor'), match.group('micro')
+        match = re.search("varnish-(?P<major>\d+)\.(?P<minor>\d+)", stdout)
+        return match.group('major'), match.group('minor')
 
     def install(self):
         location=self.options["location"]
