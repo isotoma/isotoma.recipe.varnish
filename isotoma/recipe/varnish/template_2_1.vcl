@@ -101,34 +101,34 @@ sub vcl_miss {
 sub vcl_fetch {
     set beresp.grace = 120s;
     if (beresp.status == 302) {
-        set besresp.http.X-Cacheable = "NO:302";
+        set beresp.http.X-Cacheable = "NO:302";
         return(pass);
     }
 
     if (!beresp.cacheable) {
         #if $verbose_headers
-        set besresp.http.X-Cacheable = "NO";
+        set beresp.http.X-Cacheable = "NO";
         #end if
         return(pass);
     }
-    if (besresp.http.Cache-Control ~ "(private|no-cache|no-store)") {
+    if (beresp.http.Cache-Control ~ "(private|no-cache|no-store)") {
         #if $verbose_headers
-        set besresp.http.X-Cacheable = "NO:private";
+        set beresp.http.X-Cacheable = "NO:private";
         #end if
         return(pass);
     }
     # default rule for cases where CacheFu is not running - never cache
     # HTML
-    if (besresp.http.Content-Type ~ "^text/html") {
+    if (beresp.http.Content-Type ~ "^text/html") {
         #if $verbose_headers
-        set besresp.http.X-Cacheable = "NO:html";
+        set beresp.http.X-Cacheable = "NO:html";
         #end if
         return(pass);
     }
     #if $verbose_headers
-    set besresp.http.X-Cacheable = "YES";
+    set beresp.http.X-Cacheable = "YES";
     #end if
-    unset besresp.http.set-cookie;
+    unset beresp.http.set-cookie;
     return(deliver);
 }
 
