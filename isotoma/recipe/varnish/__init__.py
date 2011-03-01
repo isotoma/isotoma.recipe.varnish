@@ -61,12 +61,16 @@ class Varnish(object):
         if major != '2':
             raise zc.buildout.UserError("Only version 2 of Varnish is supported")
 
+        self.options["major"] = major
+        self.options["minor"] = minor
+
         # Set some default options
         self.options.setdefault("cache-size", "1G")
         self.options.setdefault("daemon", "/usr/sbin/varnishd")
         self.options.setdefault("runtime-parameters","")
         self.options.setdefault('verbose-headers', 'off')
-        self.options.setdefault("template", os.path.join(os.path.dirname(__file__), "template_2_%s.vcl" % minor))
+        self.options.setdefault("template", os.path.join(os.path.dirname(__file__), "template.vcl"))
+        self.options.setdefault("template-version", "1")
         self.options.setdefault("config", os.path.join(self.options["location"], "varnish.vcl"))
         self.options.setdefault("connect-timeout", "0.4s")
         self.options.setdefault("first-byte-timeout", "300s")
@@ -83,6 +87,15 @@ class Varnish(object):
         stdout, stderr = p.communicate()
         match = re.search("varnish-(?P<major>\d+)\.(?P<minor>\d+)", stderr)
         return match.group('major'), match.group('minor')
+
+    def downgrade_config_to_2_0(self, template):
+        # Downgrade 'return (pass);' to 'pass;'
+        for ret in ("pass", "pipe", "lookup", "hash", "deliver", "fetch", "deliver", "esi", "discard", "keep"):
+            pattern = "return\w*\(%s\)" % ret
+            template = re.sub(pattern, ret, template)
+        # Replace all occurences of beresp with obj
+        template = template.replace("beresp", "obj")
+        return template
 
     def install(self):
         location=self.options["location"]
@@ -172,6 +185,20 @@ class Varnish(object):
         os.chmod(target, 0755)
         self.options.created(target)
 
+    def get_config(self):
+        template = open(self.options["template"]).read()
+
+        varnish_ver = int(self.options["minor"])
+        template_ver = int(self.options["template-version"])
+
+        if varnish_ver < template_ver:
+            #FIXME: This needs to be smarter if we ever can dowgrade multiple versions
+            template = self.downgrade_config_to_2_0(template)
+        elif varnish_ver > template_ver:
+            raise zc.buildout.UserError("Cannot upgrade template version")
+
+        return template
+
     def create_config(self):
         template = self.options["template"]
         config = self.options["config"]
@@ -182,6 +209,6 @@ class Varnish(object):
             if '-' in k:
                 vars[k.replace('-', '_')] = v;
                 del vars[k]
-        c = Template(open(template).read(), searchList=vars)
+        c = Template(self.get_config(), searchList=vars)
         open(config, "w").write(str(c))
         self.options.created(self.options["config"])
