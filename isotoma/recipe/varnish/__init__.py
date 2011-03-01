@@ -58,7 +58,7 @@ class Varnish(object):
                 buildout["buildout"]["parts-directory"], self.name)
 
         major, minor = self.determine_varnish_version()
-        if major != 2:
+        if major != '2':
             raise zc.buildout.UserError("Only version 2 of Varnish is supported")
 
         # Set some default options
@@ -66,7 +66,7 @@ class Varnish(object):
         self.options.setdefault("daemon", "/usr/sbin/varnishd")
         self.options.setdefault("runtime-parameters","")
         self.options.setdefault('verbose-headers', 'off')
-        self.options.setdefault("template", os.path.join(os.path.dirname(__file__), "template_2_%d.vcl" % minor))
+        self.options.setdefault("template", os.path.join(os.path.dirname(__file__), "template_2_%s.vcl" % minor))
         self.options.setdefault("config", os.path.join(self.options["location"], "varnish.vcl"))
         self.options.setdefault("connect-timeout", "0.4s")
         self.options.setdefault("first-byte-timeout", "300s")
@@ -79,9 +79,9 @@ class Varnish(object):
         self.options["__hashes_template"] = sha1(open(self.options["template"]).read()).hexdigest()
 
     def determine_varnish_version(self):
-        p = subprocess.Popen(["varnishd", "-V"], stdout=subprocess.PIPE)
+        p = subprocess.Popen(["varnishd", "-V"], stdout=subprocess.PIPE, stderr=subporcess.PIPE)
         stdout, stderr = p.communicate()
-        match = re.search("varnish-(?P<major>\d+)\.(?P<minor>\d+)", stdout)
+        match = re.search("varnish-(?P<major>\d+)\.(?P<minor>\d+)", stderr)
         return match.group('major'), match.group('minor')
 
     def install(self):
