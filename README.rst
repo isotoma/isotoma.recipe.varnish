@@ -75,7 +75,8 @@ group
 verbose-headers
     If you set this, you will get some very useful debugging headers in your HTTP output.
 template
-    The path to the template to use, if you wish to provide a different one.
+    The path to the template to use, if you wish to provide a different one. It's expected that this will be a Varnish 2.1 template.
+    If you try to use Varnish 2.0, isotoma.recipe.varnish will attempt to downgrade the template.
 log-include-regex
     Include lines matching the specified regex in the log output
 log-exclude-regex
