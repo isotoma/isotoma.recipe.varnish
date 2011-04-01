@@ -66,7 +66,9 @@ sub vcl_recv {
     }
 
     # Pipe large files to avoid a back-end shutdown (#7274)
-    if (req.url ~ "/getFile" || req.url ~ "/zip/") {
+    if (req.url ~ "/getFile" ||
+        req.url ~ "/zip/" ||
+        req.url ~ "/webcast/") {
         return(pipe);
     }
 
