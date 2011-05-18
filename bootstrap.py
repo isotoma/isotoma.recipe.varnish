@@ -17,6 +17,7 @@ def main():
 pass""")
     f.close()
     
+    os.chmod('bin/buildout', 0755)
 
 if __name__ == "__main__":
     main()
