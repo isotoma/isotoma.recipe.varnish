@@ -2,9 +2,21 @@
 
 """A holder file as we don't need a bootstrap but this CI configs to be more generic."""
 
+import os
+
 def main():
-    """Do nothing as the bootstrap isn't required."""
-    pass
+    """Create a fake bin dir with a dummy buildout script."""
+
+    try:
+        os.mkdir('bin')
+    except OSError:
+        pass
+        
+    f = open('bin/buildout', 'w')
+    f.write("""#!/usr/bin/python
+pass""")
+    f.close()
+    
 
 if __name__ == "__main__":
     main()
