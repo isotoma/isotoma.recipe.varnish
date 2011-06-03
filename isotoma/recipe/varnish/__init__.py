@@ -153,7 +153,7 @@ class Varnish(object):
     def add_log(self):
         target=os.path.join(self.buildout["buildout"]["bin-directory"],self.name + "log")
         f = open(target, "wt")
-        pidfile = os.path.join(self.options["location"], "varnishlog.pid")
+        pidfile = os.path.join((self.buildout["buildout"]['directory'], 'var', "varnishlog.pid"))
         daemon = self.options['varnishlog']
 
         args = """

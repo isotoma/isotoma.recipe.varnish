@@ -37,5 +37,8 @@ setup(
         "zc.buildout": [
             "default = isotoma.recipe.varnish:Varnish",
         ],
-    }
+    },
+    extras_require=dict(
+        test = ['zope.testing',],
+    ),
 )
