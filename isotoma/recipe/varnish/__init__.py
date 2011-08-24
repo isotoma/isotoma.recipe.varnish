@@ -56,13 +56,6 @@ class Varnish(object):
         self.options["location"] = os.path.join(
                 buildout["buildout"]["parts-directory"], self.name)
 
-        major, minor = self.determine_varnish_version()
-        if major != '2':
-            raise zc.buildout.UserError("Only version 2 of Varnish is supported")
-
-        self.options["major"] = major
-        self.options["minor"] = minor
-
         # Set some default options
         self.options.setdefault("cache-size", "1G")
         self.options.setdefault("daemon", "/usr/sbin/varnishd")
@@ -78,11 +71,18 @@ class Varnish(object):
         self.options.setdefault("user", "nobody")
         self.options.setdefault("group", "nobody")
 
+        major, minor = self.determine_varnish_version()
+        if major != '2':
+            raise zc.buildout.UserError("Only version 2 of Varnish is supported")
+
+        self.options["major"] = major
+        self.options["minor"] = minor
+
         # Record a SHA1 of the template we use, so we can detect changes in subsequent runs
         self.options["__hashes_template"] = sha1(open(self.options["template"]).read()).hexdigest()
 
     def determine_varnish_version(self):
-        p = subprocess.Popen(["varnishd", "-V"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        p = subprocess.Popen([self.options["daemon"], "-V"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
         stdout, stderr = p.communicate()
         match = re.search("varnish-(?P<major>\d+)\.(?P<minor>\d+)", stderr)
         return match.group('major'), match.group('minor')
