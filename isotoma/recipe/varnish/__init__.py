@@ -43,6 +43,16 @@ from Cheetah.Template import Template
 import zc.buildout
 from isotoma.recipe import gocaptain
 
+varnishadm = """
+#! /usr/bin/env python
+import os, sys
+args = ["/usr/sbin/varnishadm", "-T", "localhost:%(port)s"] + sys.argv[1:]
+if not os.path.exists(args[0]):
+    print "Could not find varnishadm, is varnish installed?"
+    sys.exit(1)
+os.execvp(args[0], args)
+""".lstrip()
+
 class Varnish(object):
 
     """ Buildout class for Varnish """
@@ -103,6 +113,8 @@ class Varnish(object):
         self.options.created(location)
         self.add_runner()
         self.create_config()
+        if "telnet" in self.options:
+            self.add_varnishadm()
         if "varnishlog" in self.options:
             self.add_log()
         return self.options.created()
@@ -146,6 +158,14 @@ class Varnish(object):
                  name=self.name,
                  description="%s daemon" % self.name,
                  )
+        f.close()
+        os.chmod(target, 0755)
+        self.options.created(target)
+
+    def add_varnishadm(self):
+        target = os.path.join(self.buildout["buildout"]["bin-directory"], self.name+"adm")
+        f = open(target, "w")
+        f.write(varnishadm % dict(port=self.options['telnet']))
         f.close()
         os.chmod(target, 0755)
         self.options.created(target)
