@@ -126,7 +126,12 @@ class Varnish(object):
         template = self.options['template']
         target=os.path.join(self.buildout["buildout"]["bin-directory"],self.name)
         f=open(target, "wt")
-        pidfile = os.path.join(self.buildout['buildout']['directory'], "var", self.name + ".pid")
+
+        if 'run-directory' in self.buildout['buildout']:
+            pidfile = os.path.join(self.buildout['buildout']['run-directory'], self.name + ".pid")
+        else:
+            pidfile = os.path.join(self.buildout['buildout']['directory'], "var", self.name + ".pid")
+
         storage = os.path.join(self.buildout["buildout"]['directory'], 'var', self.name + ".storage")
         args = """
             -p user=%(user)s
@@ -173,7 +178,12 @@ class Varnish(object):
     def add_log(self):
         target=os.path.join(self.buildout["buildout"]["bin-directory"],self.name + "log")
         f = open(target, "wt")
-        pidfile = os.path.join((self.buildout["buildout"]['directory'], 'var', "varnishlog.pid"))
+
+        if 'run-directory' in self.buildout['buildout']:
+            pidfile = os.path.join(self.buildout['buildout']['run-directory'], self.name + "log.pid")
+        else:
+            pidfile = os.path.join(self.buildout['buildout']['directory'], "var", self.name + "log.pid")
+
         daemon = self.options['varnishlog']
 
         args = """

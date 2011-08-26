@@ -5,4 +5,5 @@ Changelog
 ------------------
 
 - Use ${:daemon} rather than assuming varnishd is on PATH.
+- If there is a ${buildout:run-directory}, put pid files there
 
