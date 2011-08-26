@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.1.1 (unreleased)
+0.1.2 (2011-08-26)
 ------------------
 
 - Use ${:daemon} rather than assuming varnishd is on PATH.
