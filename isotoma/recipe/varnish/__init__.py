@@ -46,7 +46,7 @@ from isotoma.recipe import gocaptain
 varnishadm = """
 #! /usr/bin/env python
 import os, sys
-args = ["/usr/sbin/varnishadm", "-T", "localhost:%(port)s"] + sys.argv[1:]
+args = ["/usr/bin/varnishadm", "-T", "%(port)s"] + sys.argv[1:]
 if not os.path.exists(args[0]):
     print "Could not find varnishadm, is varnish installed?"
     sys.exit(1)
