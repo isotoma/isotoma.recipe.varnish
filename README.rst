@@ -91,6 +91,7 @@ varnishlog
     The path to the varnishlog binary - you can use either varnishlog or varnishncsa
 telnet
     Offer a management interface on the specified address and port. (format: address:port)
+    Will generate a varnishadm wrapper in bin dir with the -T address:port already provided
 
 License
 -------
