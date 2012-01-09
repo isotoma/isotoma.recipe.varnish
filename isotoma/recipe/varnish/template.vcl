@@ -31,6 +31,11 @@ acl purge {
     "127.0.0.1";
 }
 
+sub vcl_hash {
+    set req.hash += req.url;
+    return (hash);
+}
+
 sub vcl_recv {
     set req.grace = 120s;
 
