@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-version = '0.1.4dev'
+version = '0.1.4'
 
 setup(
     name = 'isotoma.recipe.varnish',

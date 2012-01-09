@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.1.4 (unreleased)
+0.1.4 (2012-01-09)
 ------------------
 
 - Provide a vcl_hash that doesn't use the Host header
