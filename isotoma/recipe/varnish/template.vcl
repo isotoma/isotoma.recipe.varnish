@@ -70,6 +70,12 @@ sub vcl_recv {
         return(pass);
     }
 
+    #if $enable_passthru
+    if (req.http.X-Cache-Passthru == "on") {
+        return(pass);
+    }
+    #end if
+
     # Pipe large files to avoid a back-end shutdown (#7274)
     if (req.url ~ "/getFile" ||
         req.url ~ "/zip/" ||

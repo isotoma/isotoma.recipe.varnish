@@ -81,6 +81,7 @@ class Varnish(object):
         self.options.setdefault("user", "nobody")
         self.options.setdefault("group", "nobody")
         self.options.setdefault("cachehtml", "off")
+        self.options.setdefault("enable-passthru", "off")
 
         major, minor = self.determine_varnish_version()
         if major != '2':
@@ -243,6 +244,7 @@ class Varnish(object):
         vars['backends'] = [{'ID': id, 'host': host, 'port': port} for id, (host, port) in enumerate([x.split(":") for x in backends.strip().split()])]
         self.handle_boolean(vars, 'verbose-headers')
         self.handle_boolean(vars, 'cachehtml')
+        self.handle_boolean(vars, 'enable-passthru')
         for k, v in vars.items():
             if '-' in k:
                 vars[k.replace('-', '_')] = v;
