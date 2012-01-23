@@ -126,12 +126,14 @@ sub vcl_fetch {
     }
     # default rule for cases where CacheFu is not running - never cache
     # HTML
+    #if not $cachehtml
     if (beresp.http.Content-Type ~ "^text/html") {
         #if $verbose_headers
         set beresp.http.X-Cacheable = "NO:html";
         #end if
         return(pass);
     }
+    # end if
     #if $verbose_headers
     set beresp.http.X-Cacheable = "YES";
     #end if

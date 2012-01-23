@@ -4,7 +4,7 @@ Changelog
 0.1.5 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- enabled switching of html caching with the 'cachehtml' option
 
 
 0.1.4 (2012-01-09)

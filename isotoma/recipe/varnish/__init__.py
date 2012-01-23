@@ -80,6 +80,7 @@ class Varnish(object):
         self.options.setdefault("cache-size", "80M")
         self.options.setdefault("user", "nobody")
         self.options.setdefault("group", "nobody")
+        self.options.setdefault("cachehtml", "off")
 
         major, minor = self.determine_varnish_version()
         if major != '2':
@@ -228,6 +229,12 @@ class Varnish(object):
 
         return template
 
+    def handle_boolean(self, args, name):
+            if args[name].lower() in ('on', 'yes', 'true', '1'):
+                args[name] = True
+            else:
+                args[name] = False
+
     def create_config(self):
         template = self.options["template"]
         config = self.options["config"]
@@ -238,6 +245,9 @@ class Varnish(object):
             if '-' in k:
                 vars[k.replace('-', '_')] = v;
                 del vars[k]
+        self.handle_boolean(vars, 'verbose-headers')
+        self.handle_boolean(vars, 'cachehtml')
         c = Template(self.get_config(), searchList=vars)
         open(config, "w").write(str(c))
         self.options.created(self.options["config"])
+

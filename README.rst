@@ -92,6 +92,10 @@ varnishlog
 telnet
     Offer a management interface on the specified address and port. (format: address:port)
     Will generate a varnishadm wrapper in bin dir with the -T address:port already provided
+cachehtml
+    By default HTML is explicitly excluded from being cached, to avoid various
+    broken configurations we've seen. If you really want to cache HTML pages, set
+    this to 'on'
 
 License
 -------
