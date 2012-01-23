@@ -4,7 +4,7 @@ Changelog
 0.1.6 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Fix bug in previous change
 
 
 0.1.5 (2012-01-23)

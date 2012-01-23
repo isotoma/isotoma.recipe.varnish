@@ -241,12 +241,12 @@ class Varnish(object):
         backends = self.options["backends"]
         vars = self.options.copy()
         vars['backends'] = [{'ID': id, 'host': host, 'port': port} for id, (host, port) in enumerate([x.split(":") for x in backends.strip().split()])]
+        self.handle_boolean(vars, 'verbose-headers')
+        self.handle_boolean(vars, 'cachehtml')
         for k, v in vars.items():
             if '-' in k:
                 vars[k.replace('-', '_')] = v;
                 del vars[k]
-        self.handle_boolean(vars, 'verbose-headers')
-        self.handle_boolean(vars, 'cachehtml')
         c = Template(self.get_config(), searchList=vars)
         open(config, "w").write(str(c))
         self.options.created(self.options["config"])
