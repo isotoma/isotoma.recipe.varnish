@@ -115,8 +115,12 @@ class Varnish(object):
         self.options.created(location)
         self.add_runner()
         self.create_config()
+
         if "telnet" in self.options:
             self.add_varnishadm()
+            if "name" in self.options:
+                self.add_varnish_tool()
+
         if "varnishlog" in self.options:
             self.add_log()
         return self.options.created()
@@ -176,6 +180,19 @@ class Varnish(object):
         f.close()
         os.chmod(target, 0755)
         self.options.created(target)
+
+    def add_varnish_tool(self):
+        path = self.buildout["buildout"]["bin-directory"]
+        egg_paths = [
+            self.buildout["buildout"]["develop-eggs-directory"],
+            self.buildout["buildout"]["eggs-directory"],
+            ]
+
+        args = ",".join(["'%s'" % self.options[x] for x in ('name', 'telnet', 'config')])
+
+        ws = zc.buildout.easy_install.working_set(["isotoma.recipe.varnish"], sys.executable, egg_paths)
+        zc.buildout.easy_install.scripts([(self.name+"ctl", "isotoma.recipe.varnish.varnishtool", "run")], ws, sys.executable, path, arguments=args)
+        self.options.created(os.path.join(path, self.name+"ctl"))
 
     def add_log(self):
         target=os.path.join(self.buildout["buildout"]["bin-directory"],self.name + "log")

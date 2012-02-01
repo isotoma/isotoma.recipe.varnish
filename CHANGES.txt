@@ -4,7 +4,16 @@ Changelog
 0.1.8 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Add a new varnishctl wrapper that allows for graceful reload of varnish
+  configuration.
+
+  To test a new VCL change without interrupting your site you can::
+
+      varnishctl configtest
+
+  To load a new VCL change without disrupting your site you can::
+
+      varnishctl graceful
 
 
 0.1.7 (2012-01-23)
