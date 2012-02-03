@@ -4,7 +4,8 @@ Changelog
 0.1.9 (unreleased)
 ------------------
 
-- Nothing changed yet.
+- Change handling of ``${buildout:run-directory}}`` so can cope with migrating
+  from deployments not using it.
 
 
 0.1.8 (2012-02-01)

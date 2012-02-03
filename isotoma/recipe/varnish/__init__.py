@@ -83,6 +83,18 @@ class Varnish(object):
         self.options.setdefault("cachehtml", "off")
         self.options.setdefault("enable-passthru", "off")
 
+        if not "pidfile" in self.options:
+            if 'run-directory' in self.buildout['buildout']:
+                self.options["pidfile"] = os.path.join(self.buildout['buildout']['run-directory'], self.name + ".pid")
+            else:
+                self.options["pidfile"] = os.path.join(self.buildout['buildout']['directory'], "var", self.name + ".pid")
+
+        if not "logpidfile" in self.options:
+            if 'run-directory' in self.buildout['buildout']:
+                self.options["logpidfile"] = os.path.join(self.buildout['buildout']['run-directory'], self.name + "log.pid")
+            else:
+                self.options["logpidfile"] = os.path.join(self.buildout['buildout']['directory'], "var", self.name + "log.pid")
+
         major, minor = self.determine_varnish_version()
         if major != '2':
             raise zc.buildout.UserError("Only version 2 of Varnish is supported")
@@ -133,10 +145,7 @@ class Varnish(object):
         target=os.path.join(self.buildout["buildout"]["bin-directory"],self.name)
         f=open(target, "wt")
 
-        if 'run-directory' in self.buildout['buildout']:
-            pidfile = os.path.join(self.buildout['buildout']['run-directory'], self.name + ".pid")
-        else:
-            pidfile = os.path.join(self.buildout['buildout']['directory'], "var", self.name + ".pid")
+        pidfile = self.options["pidfile"]
 
         storage = os.path.join(self.buildout["buildout"]['directory'], 'var', self.name + ".storage")
         args = """
@@ -198,10 +207,7 @@ class Varnish(object):
         target=os.path.join(self.buildout["buildout"]["bin-directory"],self.name + "log")
         f = open(target, "wt")
 
-        if 'run-directory' in self.buildout['buildout']:
-            pidfile = os.path.join(self.buildout['buildout']['run-directory'], self.name + "log.pid")
-        else:
-            pidfile = os.path.join(self.buildout['buildout']['directory'], "var", self.name + "log.pid")
+        pidfile = self.options["logpidfile"]
 
         daemon = self.options['varnishlog']
 
