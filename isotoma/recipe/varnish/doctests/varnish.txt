@@ -29,6 +29,7 @@ Now we can run buildout::
 
   >>> print system(join('bin', 'buildout')),
   Installing varnish.
+  Generated script '/sample-buildout/bin/varnishctl'.
 
 The config was indeed created::
 
@@ -61,6 +62,11 @@ The config was indeed created::
       "127.0.0.1";
   }
   <BLANKLINE>
+  sub vcl_hash {
+      set req.hash += req.url;
+      return (hash);
+  }
+  <BLANKLINE>
   sub vcl_recv {
       set req.grace = 120s;
   <BLANKLINE>
@@ -68,7 +74,7 @@ The config was indeed created::
           if (!client.ip ~ purge) {
               error 405 "Not allowed.";
           }
-          lookup;
+          return(lookup);
       }
   <BLANKLINE>
       if (req.request != "GET" &&
@@ -79,32 +85,33 @@ The config was indeed created::
           req.request != "OPTIONS" &&
           req.request != "DELETE") {
           /* Non-RFC2616 or CONNECT which is weird. */
-          pipe;
+          return(pipe);
       }
   <BLANKLINE>
       if (req.request != "GET" && req.request != "HEAD") {
           /* We only deal with GET and HEAD by default */
-          pass;
+          return(pass);
       }
   <BLANKLINE>
       if (req.http.If-None-Match) {
-          pass;
+          return(pass);
       }
   <BLANKLINE>
       if (req.url ~ "createObject") {
-          pass;
+          return(pass);
       }
+  <BLANKLINE>
   <BLANKLINE>
       # Pipe large files to avoid a back-end shutdown (#7274)
       if (req.url ~ "/getFile" ||
           req.url ~ "/zip/" ||
           req.url ~ "/webcast/") {
-          pipe;
+          return(pipe);
       }
   <BLANKLINE>
       remove req.http.Accept-Encoding;
   <BLANKLINE>
-      lookup;
+      return(lookup);
   }
   <BLANKLINE>
   sub vcl_pipe {
@@ -119,7 +126,7 @@ The config was indeed created::
       }
   <BLANKLINE>
       if (!obj.cacheable) {
-          pass;
+          return(pass);
       }
   }
   <BLANKLINE>
@@ -131,29 +138,29 @@ The config was indeed created::
   }
   <BLANKLINE>
   sub vcl_fetch {
-      set obj.grace = 120s;
-      if (obj.status == 302) {
-          set obj.http.X-Cacheable = "NO:302";
-          pass;
+      set beresp.grace = 120s;
+      if (beresp.status == 302) {
+          set beresp.http.X-Cacheable = "NO:302";
+          return(pass);
       }
   <BLANKLINE>
-      if (!obj.cacheable) {
-          set obj.http.X-Cacheable = "NO";
-          pass;
+      if (!beresp.cacheable) {
+          set beresp.http.X-Cacheable = "NO";
+          return(pass);
       }
-      if (obj.http.Cache-Control ~ "(private|no-cache|no-store)") {
-          set obj.http.X-Cacheable = "NO:private";
-          pass;
+      if (beresp.http.Cache-Control ~ "(private|no-cache|no-store)") {
+          set beresp.http.X-Cacheable = "NO:private";
+          return(pass);
       }
       # default rule for cases where CacheFu is not running - never cache
       # HTML
-      if (obj.http.Content-Type ~ "^text/html") {
-          set obj.http.X-Cacheable = "NO:html";
-          pass;
+      if (beresp.http.Content-Type ~ "^text/html") {
+          set beresp.http.X-Cacheable = "NO:html";
+          return(pass);
       }
-      set obj.http.X-Cacheable = "YES";
-      unset obj.http.set-cookie;
-      deliver;
+      set beresp.http.X-Cacheable = "YES";
+      unset beresp.http.set-cookie;
+      return(deliver);
   }
   <BLANKLINE>
   sub vcl_deliver {
@@ -164,3 +171,5 @@ The config was indeed created::
           }
   }
   <BLANKLINE>
+
+
