@@ -4,7 +4,7 @@ Changelog
 0.1.10 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Fix problem with easy_install.install on some systems.
 
 
 0.1.9 (2012-02-03)

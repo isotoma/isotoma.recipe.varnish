@@ -199,7 +199,11 @@ class Varnish(object):
 
         args = ",".join(["'%s'" % self.options[x] for x in ('name', 'telnet', 'config')])
 
-        ws = zc.buildout.easy_install.working_set(["isotoma.recipe.varnish"], sys.executable, egg_paths)
+        ws = zc.buildout.easy_install.install(["isotoma.recipe.varnish"], 
+            self.buildout["buildout"]["eggs-directory"],
+            executable=sys.executable, 
+            path=egg_paths,
+            )
         zc.buildout.easy_install.scripts([(self.name+"ctl", "isotoma.recipe.varnish.varnishtool", "run")], ws, sys.executable, path, arguments=args)
         self.options.created(os.path.join(path, self.name+"ctl"))
 
