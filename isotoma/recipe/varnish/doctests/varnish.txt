@@ -29,6 +29,7 @@ Now we can run buildout::
 
   >>> print system(join('bin', 'buildout')),
   Installing varnish.
+  ...
   Generated script '/sample-buildout/bin/varnishctl'.
 
 The config was indeed created::
