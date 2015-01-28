@@ -1,8 +1,8 @@
 Changelog
 =========
 
-3.0.0 (unreleased)
--------------------
+3.0.0 (2015-01-28)
+------------------
 
 - Version bump to support varnish 3.
 
