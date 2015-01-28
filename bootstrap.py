@@ -69,8 +69,9 @@ for k, v in sys.modules.items():
 
 is_jython = sys.platform.startswith('java')
 
-setuptools_source = 'http://peak.telecommunity.com/dist/ez_setup.py'
-distribute_source = 'http://python-distribute.org/distribute_setup.py'
+setuptools_source = 'file://' + os.path.join(os.path.dirname(os.path.abspath(__file__)), "ez_setup.py")
+distribute_source = 'file://' + os.path.join(os.path.dirname(os.path.abspath(__file__)), "distribute_setup.py")
+
 
 # parsing arguments
 def normalize_to_url(option, opt_str, value, parser):
@@ -256,7 +257,15 @@ if exitcode != 0:
     sys.exit(exitcode)
 
 ws.add_entry(eggs_dir)
-ws.require(requirement)
+try:
+    ws.require(requirement)
+except pkg_resources.DistributionNotFound, e:
+    if e.args[0].project_name == 'zc.buildout':
+        print "Couldn't install %s." % str(e.args[0])
+        print "This could be due to you having a system-installed " \
+              "python-zc.buildout package."
+    raise
+
 import zc.buildout.buildout
 zc.buildout.buildout.main(args)
 if not options.eggs: # clean up temporary egg directory

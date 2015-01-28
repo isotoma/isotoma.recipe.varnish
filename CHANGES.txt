@@ -1,10 +1,10 @@
 Changelog
 =========
 
-0.1.11 (unreleased)
+3.0.0 (unreleased)
 -------------------
 
-- Nothing changed yet.
+- Version bump to support varnish 3.
 
 
 0.1.10 (2012-10-15)

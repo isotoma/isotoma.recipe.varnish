@@ -5,6 +5,8 @@ This package provides buildout_ recipes for the configuration of varnish.  This
 has a number of features and differences from `plone.recipe.varnish`_, but it
 was inspired by that package.
 
+This version only supports varnish 3.x.
+
 This package also doesn't provide all the features of plone.recipe.varnish,
 since it's designed to be used slightly differently.  Using this recipe you
 have one varnish daemon per deployed backend application server.  If you have
@@ -39,7 +41,7 @@ A recipe for this package would look something like::
     backends = 127.0.0.1:9000
     varnishlog = /usr/bin/varnishncsa
     logfile = /var/log/varnish/mysite.log
-    
+
 This would create two start scripts in your bin directory: varnish and
 varnishlog.  The log instance will only log activity for this varnish instance.
 

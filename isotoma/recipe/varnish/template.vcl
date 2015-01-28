@@ -32,7 +32,7 @@ acl purge {
 }
 
 sub vcl_hash {
-    set req.hash += req.url;
+    hash_data(req.url);
     return (hash);
 }
 
@@ -95,40 +95,40 @@ sub vcl_pipe {
 
 sub vcl_hit {
     if (req.request == "PURGE") {
-        set obj.ttl = 0s;
+        purge;
         error 200 "Purged";
     }
 
-    if (!obj.cacheable) {
+    if (obj.ttl == 0s) {
         return(pass);
     }
 }
 
 sub vcl_miss {
     if (req.request == "PURGE") {
-        error 404 "Not in cache";
+        purge;
+        error 200 "Purged";
     }
-
 }
 
 sub vcl_fetch {
     set beresp.grace = 120s;
     if (beresp.status == 302) {
         set beresp.http.X-Cacheable = "NO:302";
-        return(pass);
+        return(hit_for_pass);
     }
 
-    if (!beresp.cacheable) {
+    if (beresp.ttl == 0s) {
         #if $verbose_headers
         set beresp.http.X-Cacheable = "NO";
         #end if
-        return(pass);
+        return(hit_for_pass);
     }
     if (beresp.http.Cache-Control ~ "(private|no-cache|no-store)") {
         #if $verbose_headers
         set beresp.http.X-Cacheable = "NO:private";
         #end if
-        return(pass);
+        return(hit_for_pass);
     }
     # default rule for cases where CacheFu is not running - never cache
     # HTML
@@ -137,7 +137,7 @@ sub vcl_fetch {
         #if $verbose_headers
         set beresp.http.X-Cacheable = "NO:html";
         #end if
-        return(pass);
+        return(hit_for_pass);
     }
     #end if
     #if $verbose_headers
